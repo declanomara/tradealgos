@@ -6,6 +6,6 @@
 # Repeat
 
 # TODO
-# Implement algo
+# Implement algorithm
 # Implementing trailing stop loss and buy stop
 # Optimize
