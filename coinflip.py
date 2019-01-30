@@ -9,6 +9,7 @@
 # Optimize
 
 import random
+import sys
 from dataloader import load_data_pd_read_csv
 
 '''
@@ -197,7 +198,8 @@ class Trader:
 
 
 if __name__ == '__main__':
-    data = load_data_pd_read_csv('coinbaseUSD.csv').itertuples()
+    file = sys.argv[1]
+    data = load_data_pd_read_csv(file).itertuples()
     best = 0
     while True:
         BIG = random.uniform(.02, .20)
