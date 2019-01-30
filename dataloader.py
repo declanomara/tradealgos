@@ -41,5 +41,5 @@ if __name__ == '__main__':
     f = input('Price data file name: ')
     load = timeit(load_data_pd_read_csv)
     data = load(f)
-    for row in data.itertuples():
-        print(row)
+    data.plot.line()
+    input()
