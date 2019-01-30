@@ -227,8 +227,8 @@ if __name__ == '__main__':
     processes = []
     for i in range(100):
         p = multiprocessing.Process(target=simulation_proc, args=(data, result_q))
-        p.start()
         p.daemon = True
+        p.start()
         processes.append(p)
 
     results_proc(result_q)
