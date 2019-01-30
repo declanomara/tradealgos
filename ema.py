@@ -59,9 +59,6 @@ if __name__ == '__main__':
 
     print('initialized')
     for row in data:
-        else:
-            print(row[0])
-            #quit()
         if usd < 0:
             quit()
 
