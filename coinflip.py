@@ -10,6 +10,7 @@
 
 import random
 import sys
+import multiprocessing
 from dataloader import load_data_pd_read_csv
 
 '''
@@ -190,6 +191,7 @@ class Trader:
         self.initialize(row)
 
         for row in self.data:
+
             self.trade(row)
             if self.calc_return() < .8:
                 return self.calc_return()
@@ -197,16 +199,36 @@ class Trader:
         return self.calc_return()
 
 
-if __name__ == '__main__':
-    file = sys.argv[1]
-    data = load_data_pd_read_csv(file).itertuples()
+def simulation_proc(data, result_q):
+    BIG = random.uniform(.02, .20)
+    SMALL = BIG * random.uniform(0, 1)
+    TRAIL = random.uniform(.8, 1)
+    trader = Trader(data, BIG, SMALL, TRAIL)
+    returns = trader.simulate()
+    results = (BIG, SMALL, TRAIL, returns)
+    result_q.put(results)
+
+
+def results_proc(result_q):
     best = 0
     while True:
-        BIG = random.uniform(.02, .20)
-        SMALL = BIG * random.uniform(0,1)
-        TRAIL = random.uniform(.8, 1)
-        trader = Trader(data, BIG, SMALL, TRAIL)
-        returns = trader.simulate()
+        BIG, SMALL, TRAIL, returns = result_q.get()
         if returns > best:
             best = returns
             print(f'BIG: {BIG} SMALL: {SMALL} TRAIL: {TRAIL} RETURN: {returns}')
+
+
+if __name__ == '__main__':
+    file = sys.argv[1]
+    data = load_data_pd_read_csv(file).itertuples()
+
+    result_q = multiprocessing.Queue()
+
+    processes = []
+    for i in range(100):
+        p = multiprocessing.Process(target=simulation_proc, args=(data, result_q))
+        p.start()
+        p.daemon = True
+        processes.append(p)
+
+    results_proc(result_q)
